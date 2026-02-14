@@ -3,7 +3,6 @@ import { supabase } from "@/lib/supabase";
 
 export async function GET(request, context) {
   try {
-    // In Next.js 14+, params may need to be awaited
     const { id } = context.params;
 
     console.log("Fetching bouquet:", id);
@@ -16,7 +15,7 @@ export async function GET(request, context) {
 
     if (error) {
       console.error("Supabase fetch error:", error);
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+      return NextResponse.json({ error: "Database error", details: error.message }, { status: 500 });
     }
 
     if (!data) {
