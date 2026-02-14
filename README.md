@@ -1,6 +1,9 @@
 # 🌸 PetalLink
 
-A private, link-based digital bouquet creator. Design Studio Ghibli–inspired illustrated bouquets with hidden personalized notes and share them via private links.
+A private, link-based digital bouquet creator. Digitally illustrated bouquets with hidden personalized notes and share them via private links.
+
+Here is my link if you'd like to create your own bouquet using PetalLink: https://petallink-jrkz0fgrw-krishkneekas-projects.vercel.app/
+
 
 ## ✨ Features
 
