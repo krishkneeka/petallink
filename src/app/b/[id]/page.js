@@ -8,7 +8,8 @@ import LetterModal from "@/components/LetterModal";
 
 export default function BouquetPage() {
   const params = useParams();
-  const id = params.id;
+  const rawId = params?.id;
+  const id = Array.isArray(rawId) ? rawId[0] : rawId;
   const [bouquet, setBouquet] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -17,7 +18,7 @@ export default function BouquetPage() {
   useEffect(() => {
     if (!id) return;
 
-    fetch(`/api/bouquets/${id}`)
+    fetch(`/api/bouquets/${encodeURIComponent(id)}`, { cache: "no-store" })
       .then((res) => {
         if (!res.ok) throw new Error("Not found");
         return res.json();

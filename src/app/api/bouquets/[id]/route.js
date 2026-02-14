@@ -1,11 +1,25 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 
-export async function GET(request, context) {
+export const runtime = "nodejs";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
+export async function GET(req, context) {
   try {
-    const { id } = context.params;
+    // ✅ params is a Promise in your Next version
+    const params = await context.params;
+    let id = params?.id;
 
-    console.log("Fetching bouquet:", id);
+    if (Array.isArray(id)) id = id[0];
+    if (!id) {
+      return NextResponse.json({ error: "Missing id param" }, { status: 400 });
+    }
+
+    id = decodeURIComponent(id);
 
     const { data, error } = await supabase
       .from("bouquets")
@@ -14,12 +28,14 @@ export async function GET(request, context) {
       .maybeSingle();
 
     if (error) {
-      console.error("Supabase fetch error:", error);
-      return NextResponse.json({ error: "Database error", details: error.message }, { status: 500 });
+      return NextResponse.json(
+        { error: "Database error", details: error.message },
+        { status: 500 }
+      );
     }
 
     if (!data) {
-      return NextResponse.json({ error: "Bouquet not found" }, { status: 404 });
+      return NextResponse.json({ error: "Bouquet not found", debug: { id } }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -32,7 +48,9 @@ export async function GET(request, context) {
       createdAt: data.created_at,
     });
   } catch (err) {
-    console.error("API GET error:", err);
-    return NextResponse.json({ error: "Internal server error", details: err.message }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error", details: err?.message ?? String(err) },
+      { status: 500 }
+    );
   }
 }
